@@ -1,2 +1,2 @@
-# ANISO-QSM
-ANISO-QSM: An Anisotropic Nonlinear Inversion for Susceptibility-separation Optimization algorithm.
+# ANISO-QSM: An Anisotropic Nonlinear Inversion for Susceptibility-separation Optimization algorithm.
+
