@@ -1,16 +1,15 @@
 
     %% ========================================================================
-    %%  FANSI – Susceptibility Separation (phase-based, 3 T data)
+    %%  FANSI – Susceptibility Separation
     %% ========================================================================
-    addpath(genpath(pwd)); % FANSI toolbox root
     
     % -------- 1. Load your images ------------------------------------------------
-    fld_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/QSM/Sepia_localfield.nii.gz');
-    mag_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/Magnitude_data.nii.gz');
-    msk_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/mask2.nii.gz');
-    R2s_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/R2_prime_denoised.nii.gz');
-    csf_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/mask2.nii.gz');
-    theta_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/registered_theta.nii.gz');                % %% === NEW
+    fld_nii = load_nii('path to local field');
+    mag_nii = load_nii('path to magnitude');
+    msk_nii = load_nii('path to mask');
+    R2s_nii = load_nii('path to R2prime');
+    csf_nii = load_nii('path to CSF mask');
+    theta_nii = load_nii('path to theta');               
     
     localField = double(fld_nii.img); % rad · s⁻¹ (ω)
     magn = double(mag_nii.img); % echo-1 magnitude
@@ -52,18 +51,18 @@
     params.input = localField;
     params.K = kernel;
     params.weight = wmap / max(wmap(:));
-    params.alpha1 = 0.1;
-    params.mu1 = 10;
+    params.alpha1 = 0.001;
+    params.mu1 = 0.1;
     params.mu2 = 1;
     params.isGPU = false;
     params.isPrecond = true;
-    params.maxOuterIter = 5; 
-    params.saveMinusIter = 5;
+    params.maxOuterIter = 10; 
+    params.saveMinusIter = 10;
     params.tolUpdate = 0.1;
     params.regweight = regweight;
     params.R2s = R2s;
-    params.Drp = 120;
-    params.Drn = 120;
+    params.Drp = 137;
+    params.Drn = 137;
     params.csf = csf;
     params.theta = theta;    
     % -------- 6. Run susceptibility separation ------------------------------------
