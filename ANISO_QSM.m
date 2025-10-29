@@ -1,7 +1,4 @@
 function out = ANISO_QSM(params,varargin)
-% Linear QSM + TV with anisotropy-aware χ− model
-% χ−(r) = Δχ(r) * cos^2(θ(r)) + χ0(r)
-% Solves for χ+(r), Δχ(r), χ0(r) with ADMM; nonlinear (phase/frequency) data consistency.
 
 totalTime = tic;
 
@@ -32,7 +29,7 @@ z3_dx = zeros(N, 'single'); z3_dy = zeros(N, 'single'); z3_dz = zeros(N, 'single
 s3_dx = zeros(N, 'single'); s3_dy = zeros(N, 'single'); s3_dz = zeros(N, 'single');
 
 % Init from QSM 
-QSM_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/QSM/Sepia_Chimap.nii.gz');
+QSM_nii = load_nii('path to QSM');
 QSM = double(QSM_nii.img);
 xp  = QSM;      % χ+
 dX  = QSM;      % Δχ
@@ -193,21 +190,12 @@ chi_minus(chi_minus>0) = 0;
 
 out.time      = toc; toc
 out.totalTime = toc(totalTime);
-out.x_plus    = xp;           % final X+ (save this at the end)
+out.x_plus    = xp;           
 out.deltaX    = dX;
 out.X0        = X0;
-out.x_minus   = chi_minus;    % final X- (for inspection; you already saved early)
+out.x_minus   = chi_minus;    
 out.iter      = t;
 out.beta_final = beta;
-% ----- Save Δχ and χ₀ as NIfTI -----
-msk_nii = load_nii('/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/mask2.nii.gz');
-mask = double(msk_nii.img);
-ref_nii = QSM_nii;  % use same header as input QSM for spatial info
-ref_nii.img = dX*-1.*mask;
-save_nii(ref_nii, '/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/susceptibility_separation/ANISO/deltaX.nii.gz');
-
-ref_nii.img = X0.*mask;
-save_nii(ref_nii, '/Users/danielridani/Desktop/Phd_Polytechnique/Data_UNF/chi_002/nifti/susceptibility_separation/ANISO/X0.nii.gz');
 
 end
 
