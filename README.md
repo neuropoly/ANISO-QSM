@@ -3,7 +3,7 @@
 ## Requirements:
 - MATLAB
 - [FANSI toolbox](https://gitlab.com/cmilovic/FANSI-toolbox)
-- [Nifti toolbox.](https://www.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image) 
+- [Nifti toolbox](https://www.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image) 
 
 ## How to use:
 - Add the FANSI toolbox to your path
