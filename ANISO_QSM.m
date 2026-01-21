@@ -10,7 +10,7 @@ saveMinusIter = max(1, min(saveMinusIter, maxOuterIter));
 savedMinus = false;
 
 % cos^2 map
-c2 = cos(theta).^2;
+c2 = cosd(theta).^2;
 
 % Weighted init for z2
 Wy = (W.*phase./(W+mu2));
