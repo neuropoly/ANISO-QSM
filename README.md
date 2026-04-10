@@ -52,6 +52,7 @@ The R2′ map is defined as: R2′=R2∗−R2
 Where :
 - R2* = 1/T2* -> obtained from GRE (Gradient Echo) data
 - R2 = 1/T2   -> obtained from SE (Spin Echo) data
+  
 Both maps are estimated using mono-exponential decay fit 
 
 ### 5. Reference Mask (ref_mask.nii)  
