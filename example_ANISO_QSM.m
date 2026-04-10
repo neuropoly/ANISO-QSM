@@ -1,4 +1,4 @@
-%% ========================================================================
+    %% ========================================================================
     %%  FANSI – Susceptibility Separation
     %% ========================================================================
     
@@ -10,7 +10,7 @@
     mag_nii   = load_nii(fullfile(baseDir,  'Magnitude_data.nii'));
     msk_nii   = load_nii(fullfile(baseDir, 'maskBrain.nii'));
     R2p_nii   = load_nii(fullfile(baseDir,  'R2_Prime.nii')); 
-    csf_nii   = load_nii(fullfile(baseDir,  'CSF_mask.nii'));
+    ref_nii   = load_nii(fullfile(baseDir,  'ref_mask.nii'));
     theta_nii = load_nii(fullfile(baseDir,  'theta.nii'));
     QSM_nii   = load_nii(fullfile(baseDir, 'QSM.nii'));
     % ajouter Xn et Xp
@@ -20,7 +20,7 @@
     magn = double(mag_nii.img); 
     mask = double(msk_nii.img);
     R2p = double(R2p_nii.img);
-    csf = double(csf_nii.img);
+    ref = double(ref_nii.img);
     theta = double(theta_nii.img);  
 
     localField(~isfinite(localField)) = 0;
@@ -36,7 +36,7 @@
     localField = localField / (2*pi); 
 
     % -------- 4. Dipole kernel ---------------------------------------------------
-    vox = [0.64 0.64 0.64]; % dimension du pixel en mm, trouvé dans metadata de layer inspecter (ou header)
+    vox = [0.64 0.64 0.64]; 
     B0_dir = [0, 0, 1];
     B0 = 3; % Tesla
     gyro = 42.58; % MHz/T
@@ -68,7 +68,7 @@
     params.R2p = R2p;
     params.Drp = 323;
     params.Drn = 401;
-    params.csf = csf;
+    params.ref = ref;
     params.theta = theta;    
     params.qsm = QSM;
  
@@ -82,7 +82,7 @@
     fld_nii.hdr.dime.datatype = 16; fld_nii.hdr.dime.bitpix = 32;
 
     % -------- 7. Change the image name accordingly ------------------------------------
-    fld_nii.img = chi_ppm_p; save_nii(fld_nii, 'testp.nii.gz' );
-    fld_nii.img = chi_ppm_m; save_nii(fld_nii,'testm.nii.gz' ); 
+    fld_nii.img = chi_ppm_p; save_nii(fld_nii, 'Xp.nii.gz' );
+    fld_nii.img = chi_ppm_m; save_nii(fld_nii,'Xm.nii.gz' ); 
 
       
