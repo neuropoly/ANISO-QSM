@@ -3,7 +3,7 @@ function out = ANISO_QSM(params,varargin)
 totalTime = tic;
 
 [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, ...
- tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,csf,theta, QSM] = parse_inputs_aniso(params, varargin{:});
+ tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin{:});
 
 saveMinusIter = params.maxOuterIter/10;
 saveMinusIter = max(1, min(saveMinusIter, maxOuterIter)); 
@@ -152,12 +152,12 @@ for t = 1:maxOuterIter
 
     
 if (~savedMinus) && (t >= saveMinusIter)
-    csf_mask = csf > 0;
+    ref_mask = ref > 0;
     chi_minus = c2.*dX + X0;          
     sum_map   = xp + chi_minus;
 
-    if any(csf_mask(:))
-        beta_minus = mean(sum_map(csf_mask), 'all');
+    if any(ref_mask(:))
+        beta_minus = mean(sum_map(ref_mask), 'all');
     else
         beta_minus = mean(sum_map(:), 'all');
     end
@@ -176,11 +176,11 @@ end
 
 % -------------------- Post-processing / outputs --------------------
 chi_minus = c2.*dX + X0;
-csf_mask  = csf > 0;
+ref_mask  = ref > 0;
 sum_map   = xp + chi_minus;
 
-if any(csf_mask(:))
-    beta = mean(sum_map(csf_mask), 'all');
+if any(ref_mask(:))
+    beta = mean(sum_map(ref_mask), 'all');
 else
     beta = mean(sum_map(:), 'all');
 end
@@ -203,12 +203,12 @@ out.beta_final = beta;
 end
 
 % ===================== INPUT PARSER (ANISOTROPY) =====================
-function [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, tolUpdate, regweight, W, isGPU, isPrecond, R2p,Drp,Drn,csf,theta, QSM] = parse_inputs_aniso(params, varargin)
+function [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, tolUpdate, regweight, W, isGPU, isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin)
 if isstruct(params)
     if isfield(params,'input'),   phase = params.input; else, error('Provide params.input'); end
     if isfield(params,'alpha1'),  alpha = params.alpha1; else, error('Provide params.alpha1'); end
     if isfield(params,'R2p'),     R2p   = params.R2p;   else, error('Provide R2p map.'); end
-    if isfield(params,'csf'),     csf   = params.csf;   else, error('Provide csf mask.'); end
+    if isfield(params,'ref'),     ref   = params.ref;   else, error('Provide ref mask.'); end
     if isfield(params,'Drp'),     Drp   = params.Drp;   else, error('Provide scalar Drp.'); end
     if isfield(params,'Drn'),     Drn   = params.Drn;   else, error('Provide scalar Drn.'); end
     if isfield(params,'theta'),   theta = params.theta; else, error('Provide theta map (radians).'); end
