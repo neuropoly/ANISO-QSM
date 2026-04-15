@@ -13,7 +13,6 @@
 - [Optimization](#optimization)
 - [Usage](#usage)
 - [Outputs](#outputs)
-  
 
 ---
 
@@ -29,6 +28,11 @@ The algorithm uses the following MRI-derived maps:
 - R2′ map
 - Reference mask
 - Theta map
+- Xp map
+- Xn map
+- FA map
+
+The **Xp** and **Xn** maps are susceptibility-separation results obtained from anisotropy-naive algorithms and are used as an initial starting point for ANISO-QSM. The **FA** map is derived from DWI data and is used as a weighting factor in the anisotropy modeling.
 
 ---
 
@@ -59,6 +63,9 @@ The algorithm requires the following input files:
 | `R2_Prime.nii` | R2′ map (`R2* - R2`) | 3D | s<sup>-1</sup> |
 | `ref_mask.nii` | Reference mask | 3D | - |
 | `theta.nii` | Theta map | 3D | degrees |
+| `Xp.nii` | Positive susceptibility map from an anisotropy-naive susceptibility-separation algorithm | 3D | ppm |
+| `Xn.nii` | Negative susceptibility map from an anisotropy-naive susceptibility-separation algorithm | 3D | ppm |
+| `FA.nii` | Fractional anisotropy map derived from DWI | 3D | - |
 
 ---
 
@@ -97,7 +104,7 @@ where:
 Both maps are estimated using a mono-exponential decay fit.
 
 ### 5. Reference mask (`ref_mask.nii`)
-This mask can be either the whole brain mask or just the CSF mask
+This mask can be either the whole brain mask or just the CSF mask.
 
 ### 6. Theta map (`theta.nii`)
 The theta map is computed from diffusion-weighted imaging (DWI) data.
@@ -105,7 +112,14 @@ The theta map is computed from diffusion-weighted imaging (DWI) data.
 A script is provided:
 - `theta_calculation.m`
 
+### 7. Initial Xp and Xn maps (`Xp.nii`, `Xn.nii`)
+These maps are obtained from an anisotropy-naive susceptibility-separation algorithm and are used as initialization for ANISO-QSM.
+
+### 8. FA map (`FA.nii`)
+The FA map is computed from DWI data and is used as a weighting factor in the anisotropy modeling.
+
 ---
+
 ## Optimization
 
 To optimize the ANISO-QSM parameters, we recommend using the realistic digital phantom provided in the **Susceptibility-Separation-Phantom** repository together with **NOMAD**, a derivative-free blackbox optimization framework.
