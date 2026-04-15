@@ -1,55 +1,50 @@
-% =========================================================
-%  CALCUL DE THETA A PARTIR DE V1
-%  Entrées :
-%    - V1_nii.gz
-%    - SegmentedModel.nii
-%  Sortie :
-%    - Resultat_theta.nii.gz
-% =========================================================
+%% ---- 1. File paths (to change) ----
+v1_img_path  = 'YOUR_PATH\V1.nii.gz';
+wm_mask_path = 'YOUR_PATH\WM_mask.nii.gz';
+out_path     = 'Resultat_theta.nii.gz';
 
+%% ---- 2. Load the images ----
+v1_nii = load_nii(v1_img_path);
+v1_data = double(v1_nii.img);
 
-%% ---- 1. File path (To be changed)----
-v1_img_path = 'YOUR_PATH\V1.nii.gz';
-seg_path    = 'YOUR_PATH\SegmentedModel.nii';
-out_path    = 'Resultat_theta.nii.gz';
+wm_nii = load_nii(wm_mask_path);
+wm_mask = double(wm_nii.img);
 
-%% ---- 2. Load the image ----
-v1_info  = niftiinfo(v1_img_path);
-v1_data  = double(niftiread(v1_info));     % 256 x 320 x 320 x 3
+fprintf('  V1      : %s\n', mat2str(size(v1_data)));
+fprintf('  WM mask : %s\n', mat2str(size(wm_mask)));
 
-seg_info = niftiinfo(seg_path);
-seg_data = double(niftiread(seg_info));    % 256 x 320 x 320
+assert(isequal(size(v1_data,1), size(wm_mask,1)) && ...
+       isequal(size(v1_data,2), size(wm_mask,2)) && ...
+       isequal(size(v1_data,3), size(wm_mask,3)), ...
+       'Error with the dimensions');
 
-fprintf('  V1  : %s | type : %s\n', mat2str(v1_info.ImageSize),  v1_info.Datatype);
-fprintf('  Seg : %s | type : %s\n', mat2str(seg_info.ImageSize), seg_info.Datatype);
+assert(size(v1_data,4) == 3, ...
+    'V1 must have 3 components in the 4th dimension');
 
-assert(isequal(v1_info.ImageSize(1:3), seg_info.ImageSize(1:3)), ...
-    'Error with the dimensions');
+%% ---- 3. Compute theta from V1 ----
+numerator = sum(v1_data(:,:,:,1:2).^2, 4);   % Vx^2 + Vy^2
+denominator = sum(v1_data.^2, 4);            % Vx^2 + Vy^2 + Vz^2
 
-assert(v1_info.ImageSize(4) == 3, ...
-    'V1 must have 3 dimensions');
-
-numerator         = sum(v1_data(:,:,:,1:2) .^ 2, 4);   % Vx² + Vy²
-denominator = sum(v1_data .^ 2, 4);          % (Vx²+Vy²+Vz²)²
 sin_theta_squared = numerator ./ denominator;
-
 theta = asin(sqrt(sin_theta_squared)) * (180 / pi);
 
-seg_binary = double(seg_data == 8);  
-theta = theta .* seg_binary;
+%% ---- 4. Apply WM mask ----
+wm_binary = double(wm_mask > 0);
+theta = theta .* wm_binary;
 
+%% ---- 5. Remove NaN/Inf ----
 theta(isnan(theta) | isinf(theta)) = 0;
 
-fprintf('  Theta min : %.4f deg\n', min(theta(seg_data > 0)));
-fprintf('  Theta max : %.4f deg\n', max(theta(seg_data > 0)));
-fprintf('  Theta mean : %.4f deg\n', mean(theta(seg_data > 0)));
+%% ---- 6. Display stats inside WM only ----
+theta_wm = theta(wm_binary > 0);
 
-%% ---- 8. Header ----
-out_info                  = v1_info;
-out_info.Datatype         = 'single';
-out_info.BitsPerPixel     = 32;
-out_info.ImageSize        = size(theta);                   
-out_info.PixelDimensions  = v1_info.PixelDimensions(1:3);  
-%% ---- 9. Save ----
+fprintf('  Theta min  : %.4f deg\n', min(theta_wm));
+fprintf('  Theta max  : %.4f deg\n', max(theta_wm));
+fprintf('  Theta mean : %.4f deg\n', mean(theta_wm));
+
+%% ---- 7. Save output ----
+out_nii = v1_nii;
+out_nii.img = single(theta);
+
 fprintf('Saving in: %s\n', out_path);
-niftiwrite(single(theta), out_path, out_info, 'Compressed', true);
+save_nii(out_nii, out_path);
