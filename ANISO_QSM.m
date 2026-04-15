@@ -5,7 +5,7 @@ totalTime = tic;
 [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, ...
  tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin{:});
 
-saveMinusIter = params.maxOuterIter/10;
+saveMinusIter = round(params.maxOuterIter/10);
 saveMinusIter = max(1, min(saveMinusIter, maxOuterIter)); 
 savedMinus = false;
 
