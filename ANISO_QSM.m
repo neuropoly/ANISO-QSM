@@ -3,10 +3,10 @@ function out = ANISO_QSM(params,varargin)
 totalTime = tic;
 
 [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, ...
- tolUpdate, regweight, W, ~ ,isPrecond, R2s,Drp,Drn,csf,theta] = parse_inputs_aniso(params, varargin{:});
+ tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin{:});
 
-if isfield(params,'saveMinusIter'), saveMinusIter = params.saveMinusIter; else, saveMinusIter = 25; end
-saveMinusIter = max(1, min(saveMinusIter, maxOuterIter));
+saveMinusIter = params.maxOuterIter/10;
+saveMinusIter = max(1, min(saveMinusIter, maxOuterIter)); 
 savedMinus = false;
 
 % cos^2 map
@@ -29,11 +29,14 @@ z3_dx = zeros(N, 'single'); z3_dy = zeros(N, 'single'); z3_dz = zeros(N, 'single
 s3_dx = zeros(N, 'single'); s3_dy = zeros(N, 'single'); s3_dz = zeros(N, 'single');
 
 % Init from QSM 
-QSM_nii = load_nii('path to QSM');
-QSM = double(QSM_nii.img);
-xp  = QSM;      % χ+
-dX  = QSM;      % Δχ
-X0  = QSM;      % χ0
+% QSM_nii = load_nii('path to QSM');
+% QSM = double(QSM_nii.img);
+QSM_pos = max(QSM, 0);  
+QSM_min = min(QSM, 0);
+
+xp = QSM_pos;             % χ+ - mettre chi pos d'une autre method
+dX  = QSM;                % Δχ 
+X0  = QSM_min .* (-1);    % χ0 - mettre chi neg d'une autre method Xn.*(-1)
 
 % Data split variable and dual
 z2 = isPrecond * Wy + (~isPrecond)*zeros(N,'single');
@@ -61,7 +64,7 @@ for t = 1:maxOuterIter
     xp = real(ifftn( ( ...
           mu * (tx + ty + tz) ...                                
         + mu2 * (W2) * conj(Kernel) .* fftn(z2 - s2) ...        
-        + fftn( Drp .* ( Drn.*(c2.*dX + X0) + R2s ) ) ...             
+        + fftn( Drp .* ( Drn.*(c2.*dX + X0) + R2p ) ) ...             
     ) ./ ( eps + mu * EE2 + mu2 * (W2^2) * abs(Kernel).^2 + Drp.*Drp ) )); 
     clear tx ty tz
 
@@ -75,7 +78,7 @@ for t = 1:maxOuterIter
     dX = real(ifftn( ( ...
           mu * (tx + ty + tz) ...
         + mu2 * (W2) * conj(Kernel) .* fftn( c2 .* (z2 - s2) ) ...
-        + fftn( (Drn .* c2) .* ( Drp.*xp - R2s - Drn.*X0 ) ) ...
+        + fftn( (Drn .* c2) .* ( Drp.*xp - R2p - Drn.*X0 ) ) ...
     ) ./ ( eps + mu * EE2 + mu2 * (W2^2) * abs(Kernel).^2 + Drn.*Drn )));
     clear tx ty tz
 
@@ -88,7 +91,7 @@ for t = 1:maxOuterIter
     X0 = real(ifftn( ( ...
           mu * (tx + ty + tz) ...
         + mu2 * (W2) * conj(Kernel) .* fftn(z2 - s2) ...
-        + fftn( Drn .* ( Drp.*xp - R2s - Drn.*(c2.*dX) ) ) ...
+        + fftn( Drn .* ( Drp.*xp - R2p - Drn.*(c2.*dX) ) ) ...
     ) ./ ( eps + mu * EE2 + mu2 * (W2^2) * abs(Kernel).^2 + Drn.*Drn )));
     clear tx ty tz
 
@@ -143,18 +146,18 @@ for t = 1:maxOuterIter
 
     % -------------- update Drp, Drn ------------------------------
     A = [xp(:), -(chi_minus(:))]; 
-    coef = (A'*A + 1e-8*eye(2)) \ (A'*R2s(:));
+    coef = (A'*A + 1e-8*eye(2)) \ (A'*R2p(:));
     Drp = max(coef(1), 0);
     Drn = max(coef(2), 0);
 
     
 if (~savedMinus) && (t >= saveMinusIter)
-    csf_mask = csf > 0;
+    ref_mask = ref > 0;
     chi_minus = c2.*dX + X0;          
     sum_map   = xp + chi_minus;
 
-    if any(csf_mask(:))
-        beta_minus = mean(sum_map(csf_mask), 'all');
+    if any(ref_mask(:))
+        beta_minus = mean(sum_map(ref_mask), 'all');
     else
         beta_minus = mean(sum_map(:), 'all');
     end
@@ -173,11 +176,11 @@ end
 
 % -------------------- Post-processing / outputs --------------------
 chi_minus = c2.*dX + X0;
-csf_mask  = csf > 0;
+ref_mask  = ref > 0;
 sum_map   = xp + chi_minus;
 
-if any(csf_mask(:))
-    beta = mean(sum_map(csf_mask), 'all');
+if any(ref_mask(:))
+    beta = mean(sum_map(ref_mask), 'all');
 else
     beta = mean(sum_map(:), 'all');
 end
@@ -200,15 +203,16 @@ out.beta_final = beta;
 end
 
 % ===================== INPUT PARSER (ANISOTROPY) =====================
-function [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, tolUpdate, regweight, W, isGPU, isPrecond, R2s,Drp,Drn,csf,theta] = parse_inputs_aniso(params, varargin)
+function [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, tolUpdate, regweight, W, isGPU, isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin)
 if isstruct(params)
     if isfield(params,'input'),   phase = params.input; else, error('Provide params.input'); end
     if isfield(params,'alpha1'),  alpha = params.alpha1; else, error('Provide params.alpha1'); end
-    if isfield(params,'R2s'),     R2s   = params.R2s;   else, error('Provide R2s map.'); end
-    if isfield(params,'csf'),     csf   = params.csf;   else, error('Provide csf mask.'); end
+    if isfield(params,'R2p'),     R2p   = params.R2p;   else, error('Provide R2p map.'); end
+    if isfield(params,'ref'),     ref   = params.ref;   else, error('Provide ref mask.'); end
     if isfield(params,'Drp'),     Drp   = params.Drp;   else, error('Provide scalar Drp.'); end
     if isfield(params,'Drn'),     Drn   = params.Drn;   else, error('Provide scalar Drn.'); end
     if isfield(params,'theta'),   theta = params.theta; else, error('Provide theta map (radians).'); end
+    if isfield(params,'qsm'),     QSM   = params.qsm;   else, error('Provide QSM map (params.qsm).'); end
 else
     error('Provide a struct params with required fields.');
 end
