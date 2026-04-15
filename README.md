@@ -10,8 +10,10 @@
 - [Requirements](#requirements)
 - [Input Data](#input-data)
 - [Preprocessing](#preprocessing)
+- [Optimization](#optimization)
 - [Usage](#usage)
 - [Outputs](#outputs)
+  
 
 ---
 
@@ -104,7 +106,39 @@ A script is provided:
 - `theta_calculation.m`
 
 ---
+## Optimization
 
+To optimize the ANISO-QSM parameters, we recommend using the realistic digital phantom provided in the **Susceptibility-Separation-Phantom** repository together with **NOMAD**, a derivative-free blackbox optimization framework.
+
+### Recommended resources
+- [Phantom](https://github.com/neuropoly/Susceptibility-Separation-Phantom)
+- [NOMAD](https://www.gerad.ca/en/software/nomad/)
+
+### Installation
+Install NOMAD before running the optimization pipeline.  
+We recommend using the **Python-based workflow**, since the optimization scripts provided for ANISO-QSM are written in Python and call the MATLAB evaluation functions.
+
+### Optimization modes
+Two optimization cases are available:
+- **Without noise**
+- **With noise**
+
+These allow parameter tuning under ideal simulated conditions or under more realistic noisy conditions.
+
+### Files to modify
+Before running the optimization, update the paths in the following files so they match your local installation:
+
+- `aniso_nomad_eval.m`
+- `aniso_nomad_save_best.m`
+- `nomad_opt_aniso_qsm.py`
+
+### Running the optimization
+Once the paths are updated, run:
+
+```bash
+python nomad_opt_aniso_qsm.py
+```
+---
 ## Usage
 
 1. Add the required toolboxes to the MATLAB path.
@@ -116,7 +150,6 @@ A script is provided:
 example_ANISO_QSM
 ```
 ---
-
 ## Outputs
 
 ANISO-QSM generates the following output maps:
