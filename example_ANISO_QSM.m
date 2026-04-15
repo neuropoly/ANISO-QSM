@@ -1,7 +1,7 @@
     %% ========================================================================
     %%  FANSI – Susceptibility Separation
     %% ========================================================================
-    
+    clear; clc;
     % -------- 1. Change for the input data file direction ----------------------------------------
     baseDir = 'YOUR_PATH';
     % ---------------------------------------------------------------------------------------------
@@ -12,8 +12,11 @@
     R2p_nii   = load_nii(fullfile(baseDir,  'R2_Prime.nii')); 
     ref_nii   = load_nii(fullfile(baseDir,  'ref_mask.nii'));
     theta_nii = load_nii(fullfile(baseDir,  'theta.nii'));
+    FA_nii    = load_nii(fullfile(baseDir, 'FA.nii'));
     QSM_nii   = load_nii(fullfile(baseDir, 'QSM.nii'));
-    % ajouter Xn et Xp
+    Xp_nii    = load_nii(fullfile(baseDir, 'Xp.nii'));
+    Xn_nii    = load_nii(fullfile(baseDir, 'Xn.nii'));
+   
 
     QSM = double(QSM_nii.img);
     localField = double(fld_nii.img); % rad · s⁻¹ (ω)
@@ -22,6 +25,9 @@
     R2p = double(R2p_nii.img);
     ref = double(ref_nii.img);
     theta = double(theta_nii.img);  
+    Xp = double(Xp_nii.img);
+    Xn = double(Xn_nii.img);
+    FA = double(FA_nii.img);
 
     localField(~isfinite(localField)) = 0;
     magn(~isfinite(magn)) = 0;
@@ -29,9 +35,13 @@
     R2p(~isfinite(R2p)) = 0;
     theta(~isfinite(theta)) = 0; 
     theta(isnan(theta)) = 0; 
+    Xp(~isfinite(Xp)) = 0;
+    Xn(~isfinite(Xn)) = 0;
+    FA(~isfinite(FA)) = 0;
 
     magn=magn.*mask;
-
+    FA = (FA - min(FA(:))) ./ (max(FA(:)) - min(FA(:)));
+    FA = FA .* mask;
     % -------- 3. Convert unit -------------------------
     localField = localField / (2*pi); 
 
@@ -52,9 +62,15 @@
     regweight = min(mean(Gm(:)) ./ Gm,100); 
     
     % -------- 5. Prepare the parameter struct ------------------------------
-    % Fixer ces valeurs
+   
     params = struct();
     params.input = localField;
+    params.ref = ref;
+    params.theta = theta;    
+    params.qsm = QSM;
+    params.Xp = Xp;
+    params.Xn = Xn;
+    params.FA = FA;
     params.K = kernel;
     params.weight = wmap / max(wmap(:));
     params.alpha1 = 0.01;
@@ -68,9 +84,7 @@
     params.R2p = R2p;
     params.Drp = 323;
     params.Drn = 401;
-    params.ref = ref;
-    params.theta = theta;    
-    params.qsm = QSM;
+  
  
     % -------- 6. Run susceptibility separation ------------------------------------
     out = ANISO_QSM(params);
