@@ -3,11 +3,11 @@ function out = ANISO_QSM(params,varargin)
 totalTime = tic;
 
 [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, ...
- tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin{:});
+ tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,ref,theta, QSM,Xp,Xn,FA] = parse_inputs_aniso(params, varargin{:});
 
 saveMinusIter = round(params.maxOuterIter/10);
 saveMinusIter = max(1, min(saveMinusIter, maxOuterIter)); 
-savedMinus = false;
+savedMinus = true;
 
 % cos^2 map
 c2 = cosd(theta).^2;
@@ -28,15 +28,9 @@ s2_dx = zeros(N, 'single'); s2_dy = zeros(N, 'single'); s2_dz = zeros(N, 'single
 z3_dx = zeros(N, 'single'); z3_dy = zeros(N, 'single'); z3_dz = zeros(N, 'single');
 s3_dx = zeros(N, 'single'); s3_dy = zeros(N, 'single'); s3_dz = zeros(N, 'single');
 
-% Init from QSM 
-% QSM_nii = load_nii('path to QSM');
-% QSM = double(QSM_nii.img);
-QSM_pos = max(QSM, 0);  
-QSM_min = min(QSM, 0);
-
-xp = QSM_pos;             % χ+ - mettre chi pos d'une autre method
-dX  = QSM;                % Δχ 
-X0  = QSM_min .* (-1);    % χ0 - mettre chi neg d'une autre method Xn.*(-1)
+xp = Xp;             
+dX  = QSM;                
+X0  = Xn .* (-1);    
 
 % Data split variable and dual
 z2 = isPrecond * Wy + (~isPrecond)*zeros(N,'single');
@@ -75,11 +69,11 @@ for t = 1:maxOuterIter
 
     dX_prev = dX;
     % correct derivative w.r.t Δχ → apply c2 in spatial domain
-    dX = real(ifftn( ( ...
+    dX = (real(ifftn( ( ...
           mu * (tx + ty + tz) ...
         + mu2 * (W2) * conj(Kernel) .* fftn( c2 .* (z2 - s2) ) ...
         + fftn( (Drn .* c2) .* ( Drp.*xp - R2p - Drn.*X0 ) ) ...
-    ) ./ ( eps + mu * EE2 + mu2 * (W2^2) * abs(Kernel).^2 + Drn.*Drn )));
+    ) ./ ( eps + mu * EE2 + mu2 * (W2^2) * abs(Kernel).^2 + Drn.*Drn ))).*FA;
     clear tx ty tz
 
     % -------- χ0 update --------
@@ -165,7 +159,7 @@ if (~savedMinus) && (t >= saveMinusIter)
     chi_minus_early = chi_minus - beta_minus/2;
     chi_minus_early(chi_minus_early > 0) = 0;
 
-    out.x_minus_early     = chi_minus_early;  
+    out.x_minus     = chi_minus_early;  
     out.beta_minus        = beta_minus;
     out.iter_minus_saved  = t;
     savedMinus = true;
@@ -196,14 +190,14 @@ out.totalTime = toc(totalTime);
 out.x_plus    = xp;           
 out.deltaX    = dX;
 out.X0        = X0;
-out.x_minus   = chi_minus;    
+out.X_minus   = chi_minus;    
 out.iter      = t;
 out.beta_final = beta;
 
 end
 
 % ===================== INPUT PARSER (ANISOTROPY) =====================
-function [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, tolUpdate, regweight, W, isGPU, isPrecond, R2p,Drp,Drn,ref,theta, QSM] = parse_inputs_aniso(params, varargin)
+function [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, tolUpdate, regweight, W, isGPU, isPrecond, R2p,Drp,Drn,ref,theta, QSM,Xp,Xn,FA] = parse_inputs_aniso(params, varargin)
 if isstruct(params)
     if isfield(params,'input'),   phase = params.input; else, error('Provide params.input'); end
     if isfield(params,'alpha1'),  alpha = params.alpha1; else, error('Provide params.alpha1'); end
@@ -212,7 +206,10 @@ if isstruct(params)
     if isfield(params,'Drp'),     Drp   = params.Drp;   else, error('Provide scalar Drp.'); end
     if isfield(params,'Drn'),     Drn   = params.Drn;   else, error('Provide scalar Drn.'); end
     if isfield(params,'theta'),   theta = params.theta; else, error('Provide theta map (radians).'); end
-    if isfield(params,'qsm'),     QSM   = params.qsm;   else, error('Provide QSM map (params.qsm).'); end
+    if isfield(params,'QSM'),     QSM   = params.QSM;   else, error('Provide QSM map (params.QSM).'); end
+    if isfield(params,'Xp'),     Xp   = params.Xp;   else, error('Provide Xp map (params.Xp).'); end
+    if isfield(params,'Xn'),     Xn   = params.Xn;   else, error('Provide Xn map (params.Xn).'); end
+    if isfield(params,'FA'),     FA   = params.FA;   else, error('Provide FA map (params.FA).'); end
 else
     error('Provide a struct params with required fields.');
 end
