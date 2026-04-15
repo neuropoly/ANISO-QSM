@@ -1,6 +1,6 @@
 # ANISO-QSM
 
-**ANISO-QSM** is an anisotropic nonlinear inversion method for susceptibility separation that estimates **positive susceptibility** (χ⁺) and **negative susceptibility** (χ⁻) from MRI-derived input maps. Unlike conventional susceptibility-separation methods, it takes into account **susceptibility anisotropy** using information derived from **diffusion-weighted imaging (DWI)** data through the **theta** map.
+**ANISO-QSM** is an anisotropic nonlinear inversion method for susceptibility separation that estimates **positive susceptibility** (χ⁺) and **negative susceptibility** (χ⁻). **ANISO-QSM** takes into account **susceptibility anisotropy** using information derived from **diffusion-weighted imaging (DWI)** data.
 
 ---
 
