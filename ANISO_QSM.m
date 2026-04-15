@@ -3,7 +3,7 @@ function out = ANISO_QSM(params,varargin)
 totalTime = tic;
 
 [phase, alpha, N, Kernel, mu, mu2, maxOuterIter, ...
- tolUpdate, regweight, W, ~ ,isPrecond, R2p,Drp,Drn,ref,theta, QSM,Xp,Xn,FA] = parse_inputs_aniso(params, varargin{:});
+ tolUpdate, regweight, W, ~ ,isPrecond, R2p, Drp, Drn, ref, theta, QSM, Xp, Xn, FA] = parse_inputs_aniso(params, varargin{:});
 
 saveMinusIter = round(params.maxOuterIter/10);
 saveMinusIter = max(1, min(saveMinusIter, maxOuterIter)); 
@@ -148,15 +148,8 @@ for t = 1:maxOuterIter
 if (~savedMinus) && (t >= saveMinusIter)
     ref_mask = ref > 0;
     chi_minus = c2.*dX + X0;          
-    sum_map   = xp + chi_minus;
-
-    if any(ref_mask(:))
-        beta_minus = mean(sum_map(ref_mask), 'all');
-    else
-        beta_minus = mean(sum_map(:), 'all');
-    end
-
-    chi_minus_early = chi_minus - beta_minus/2;
+    beta_minus = mean(chi_minus(ref_mask), 'all');
+    chi_minus_early = chi_minus - beta_minus;
     chi_minus_early(chi_minus_early > 0) = 0;
 
     out.x_minus     = chi_minus_early;  
@@ -172,16 +165,8 @@ end
 chi_minus = c2.*dX + X0;
 ref_mask  = ref > 0;
 sum_map   = xp + chi_minus;
-
-if any(ref_mask(:))
-    beta = mean(sum_map(ref_mask), 'all');
-else
-    beta = mean(sum_map(:), 'all');
-end
-
-xp = xp - beta/2;
-chi_minus = chi_minus - beta/2;
-
+beta = mean(xp(ref_mask), 'all');
+xp = xp - beta;
 xp(xp<0) = 0;
 chi_minus(chi_minus>0) = 0;
 
