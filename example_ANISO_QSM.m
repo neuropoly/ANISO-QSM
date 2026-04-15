@@ -10,12 +10,12 @@
     mag_nii   = load_nii(fullfile(baseDir,  'Magnitude_data.nii'));
     msk_nii   = load_nii(fullfile(baseDir, 'maskBrain.nii'));
     R2p_nii   = load_nii(fullfile(baseDir,  'R2_Prime.nii')); 
-    ref_nii   = load_nii(fullfile(baseDir,  'ref_mask.nii'));
+    ref_nii   = load_nii(fullfile(baseDir,  'ref_mask.nii')); % can be the same as msk_nii
     theta_nii = load_nii(fullfile(baseDir,  'theta.nii'));
     FA_nii    = load_nii(fullfile(baseDir, 'FA.nii'));
     QSM_nii   = load_nii(fullfile(baseDir, 'QSM.nii'));
-    Xp_nii    = load_nii(fullfile(baseDir, 'Xp.nii'));
-    Xn_nii    = load_nii(fullfile(baseDir, 'Xn.nii'));
+    Xp_nii    = load_nii(fullfile(baseDir, 'Xp.nii')); % QSM can also be used here
+    Xn_nii    = load_nii(fullfile(baseDir, 'Xn.nii')); % QSM can also be used here
    
 
     QSM = double(QSM_nii.img);
