@@ -91,7 +91,7 @@
 
    % ----------------  SAVE  --------------------
     chi_ppm_p = single(out.x_plus  .* mask);
-    chi_ppm_m = single(out.x_minus_early .* mask*-1);
+    chi_ppm_m = single(out.x_minus .* mask*-1);
 
     fld_nii.hdr.dime.datatype = 16; fld_nii.hdr.dime.bitpix = 32;
 
