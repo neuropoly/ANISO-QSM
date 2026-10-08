@@ -71,19 +71,19 @@ The local field map is obtained from phase images using:
 - **Phase unwrapping** with **ROMEO**
 - **Background field removal** with **V-SHARP**
 
-These steps can be performed using the [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
+Recommended tool: [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
 
 ### 2. QSM map (`QSM.nii`)
 The QSM map is computed from the local field using dipole inversion.
 
 Recommended method:
 - **MEDI** (Morphology Enabled Dipole Inversion)
+Recommended tool: [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
 
 ### 3. Brain mask (`maskBrain.nii`)
 The brain mask is used to restrict computations to brain tissue.
 
-Recommended tool:
-- **FSL BET** (Brain Extraction Tool)
+Recommended tool: **FSL BET** (Brain Extraction Tool)
 
 ### 4. R2′ map (`R2_Prime.nii`)
 The R2′ map is defined as:
@@ -95,13 +95,14 @@ where:
 - `R2 = 1 / T2`, obtained from spin-echo data
 
 Both maps are estimated using a mono-exponential decay fit.
+Recommended tool: [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
 
-### 5. Theta map (`theta.nii`)
+### 5. FA map (`FA.nii`)
+The FA map is computed from DWI data and is used as a weighting factor in the anisotropy modeling.
+
+### 6. Theta map (`theta.nii`)
 The theta map is computed from diffusion-weighted imaging (DWI) data.
 
-
-### 6. FA map (`FA.nii`)
-The FA map is computed from DWI data and is used as a weighting factor in the anisotropy modeling.
 
 ## Usage
 
