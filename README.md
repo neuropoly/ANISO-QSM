@@ -106,9 +106,8 @@ The FA map is computed from DWI data and is used as a weighting factor in the an
 ## Usage
 
 1. Add the required toolboxes to the MATLAB path.
-2. Place all input files in the same folder.
-3. Update the `baseDir` variable in `example_ANISO_QSM.m` so that it points to this folder.
-4. Run:
+2. Update the paths in `example_ANISO_QSM.m` and the desired parameters (the current parameter values are those identified as optimal).
+3. Run:
 
 ```matlab
 example_ANISO_QSM
@@ -119,3 +118,4 @@ example_ANISO_QSM
 ANISO-QSM generates the following output maps:
 - χ⁺: positive susceptibility map in ppm
 - χ⁻: negative susceptibility map in ppm
+- χtotal: total susceptibility map in ppm
