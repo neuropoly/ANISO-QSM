@@ -9,6 +9,8 @@ totalTime = tic;
  tolUpdate, regweight, W, ~, isPrecond, R2p, Drp, Drn, ...
  mask, theta, FA, QSM] = parse_inputs_aniso(params, varargin{:});
 
+saveMinusIter = 5;
+
 
 %% ========================================================================
 %  2. Run isotropic optimization
@@ -35,7 +37,7 @@ fprintf('[ANISO-QSM] Isotropic initialization completed.\n');
 fprintf('\n[ANISO-QSM] Running anisotropic susceptibility separation...\n');
 
 out = run_anisotropic_solver( ...
-    phase, alpha, N, Kernel, mu, mu2, maxOuterIter, 5, ...
+    phase, alpha, N, Kernel, mu, mu2, maxOuterIter, saveMinusIter, ...
     tolUpdate, regweight, W, isPrecond, R2p, Drp, Drn, ...
     mask, theta, FA, QSM, chi_plus_iso, chi_minus_iso);
 
@@ -56,13 +58,13 @@ end
 % =========================================================================
 
 function out = run_anisotropic_solver(phase, alpha, N, Kernel, mu, mu2, ...
-                                      maxOuterIter, 5, tolUpdate, ...
+                                      maxOuterIter, saveMinusIter, tolUpdate, ...
                                       regweight, W, isPrecond, R2p, Drp, Drn, ...
                                       mask, theta, FA, QSM, chi_plus_iso, chi_minus_iso)
 
 solverSettings = { ...
     maxOuterIter,  Drn, chi_plus_iso, chi_minus_iso, 'zero',  'isotropic', true; ...
-    5, Drp, [],           [],            'theta', 'qsm',       false};
+    saveMinusIter, Drp, [],           [],            'theta', 'qsm',       false};
 
 solverOutput = cell(size(solverSettings, 1), 1);
 
@@ -429,6 +431,7 @@ chi_minus = chi_minus - beta_n;
 
 xp(xp < 0) = 0;
 chi_minus(chi_minus > 0) = 0;
+
 
 
 %% ========================================================================
