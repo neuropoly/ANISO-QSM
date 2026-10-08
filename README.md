@@ -26,10 +26,7 @@ The algorithm uses the following MRI-derived maps:
 - QSM map
 - Brain mask
 - R2′ map
-- Reference mask
 - Theta map
-- Xp map
-- Xn map
 - FA map
 
 The **Xp** and **Xn** maps are susceptibility-separation results obtained from anisotropy-naive algorithms and are used as an initial starting point for ANISO-QSM. The **FA** map is derived from DWI data and is used as a weighting factor in the anisotropy modeling.
@@ -61,10 +58,7 @@ The algorithm requires the following input files:
 | `QSM.nii` | Quantitative susceptibility map | 3D | ppm |
 | `maskBrain.nii` | Brain mask | 3D | - |
 | `R2_Prime.nii` | R2′ map (`R2* - R2`) | 3D | s<sup>-1</sup> |
-| `ref_mask.nii` | Reference mask | 3D | - |
 | `theta.nii` | Theta map | 3D | degrees |
-| `Xp.nii` | Positive susceptibility map from an anisotropy-naive susceptibility-separation algorithm | 3D | ppm |
-| `Xn.nii` | Negative susceptibility map from an anisotropy-naive susceptibility-separation algorithm | 3D | ppm |
 | `FA.nii` | Fractional anisotropy map derived from DWI | 3D | - |
 
 ---
