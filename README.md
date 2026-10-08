@@ -97,56 +97,13 @@ where:
 
 Both maps are estimated using a mono-exponential decay fit.
 
-### 5. Reference mask (`ref_mask.nii`)
-This mask can be either the whole brain mask or just the CSF mask.
-
-### 6. Theta map (`theta.nii`)
+### 5. Theta map (`theta.nii`)
 The theta map is computed from diffusion-weighted imaging (DWI) data.
 
-A script is provided:
-- `theta_calculation.m`
 
-### 7. Initial Xp and Xn maps (`Xp.nii`, `Xn.nii`)
-These maps are obtained from an anisotropy-naive susceptibility-separation algorithm and are used as initialization for ANISO-QSM.
-
-### 8. FA map (`FA.nii`)
+### 6. FA map (`FA.nii`)
 The FA map is computed from DWI data and is used as a weighting factor in the anisotropy modeling.
 
----
-
-## Optimization
-
-To optimize the ANISO-QSM parameters, we recommend using the realistic digital phantom provided in the **Susceptibility-Separation-Phantom** repository together with **NOMAD**, a derivative-free blackbox optimization framework.
-
-### Recommended resources
-- [Phantom](https://github.com/neuropoly/Susceptibility-Separation-Phantom)
-- [NOMAD](https://www.gerad.ca/en/software/nomad/)
-
-### Installation
-Install NOMAD before running the optimization pipeline.  
-We recommend using the **Python-based workflow**, since the optimization scripts provided for ANISO-QSM are written in Python and call the MATLAB evaluation functions.
-
-### Optimization modes
-Two optimization cases are available:
-- **Without noise**
-- **With noise**
-
-These allow parameter tuning under ideal simulated conditions or under more realistic noisy conditions.
-
-### Files to modify
-Before running the optimization, update the paths in the following files so they match your local installation:
-
-- `aniso_nomad_eval.m`
-- `aniso_nomad_save_best.m`
-- `nomad_opt_aniso_qsm.py`
-
-### Running the optimization
-Once the paths are updated, run:
-
-```bash
-python nomad_opt_aniso_qsm.py
-```
----
 ## Usage
 
 1. Add the required toolboxes to the MATLAB path.
