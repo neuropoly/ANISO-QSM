@@ -39,10 +39,9 @@ The **Xp** and **Xn** maps are susceptibility-separation results obtained from a
 - MATLAB
 
 ### MATLAB Toolboxes
-- [FANSI toolbox](https://gitlab.com/cmilovic/FANSI-toolbox)
 - [NIfTI toolbox](https://www.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image)
 - [Image Processing Toolbox](https://www.mathworks.com/products/image-processing.html)
-- [Parallel Computing Toolbox](https://www.mathworks.com/products/parallel-computing.html)
+- [Parallel Computing Toolbox](https://www.mathworks.com/products/parallel-computing.html) (optional)
 - [Statistics and Machine Learning Toolbox](https://www.mathworks.com/products/statistics.html)
 
 ---
