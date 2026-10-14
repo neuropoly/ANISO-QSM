@@ -128,3 +128,13 @@ ANISO-QSM generates the following output maps:
 - χ⁺: positive susceptibility map in ppm
 - χ⁻: negative susceptibility map in ppm
 - χtotal: total susceptibility map in ppm
+
+
+## Citation
+
+If you use ANISO-QSM in your research, please cite:
+
+Ridani D, Diouane Y, De Leener B, Alonso Ortiz E.
+**ANISO-QSM: An Anisotropic Nonlinear Inversion for Susceptibility-separation Optimization algorithm.**
+Proceedings of the International Society for Magnetic Resonance in Medicine (ISMRM),
+Cape Town, South Africa, 2026. Abstract 630-01-001. http://echo.ismrm.org/p/ISMRM2026/630-01-001
