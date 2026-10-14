@@ -115,7 +115,7 @@ The repository includes a Python script (func/CalculateTheta.py) to calculate th
 ## Usage
 
 1. Add the required toolboxes to the MATLAB path.
-2. Update the paths in `example_ANISO_QSM.m` and the desired parameters (the current parameter values are those identified as optimal).
+2. Update the paths in `example_ANISO_QSM.m` and the desired parameters.
 3. Run:
 
 ```matlab
