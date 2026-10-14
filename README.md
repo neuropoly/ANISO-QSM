@@ -29,7 +29,9 @@ The algorithm uses the following MRI-derived maps:
 - Theta map
 - FA map
 
-The **Xp** and **Xn** maps are susceptibility-separation results obtained from anisotropy-naive algorithms and are used as an initial starting point for ANISO-QSM. The **FA** map is derived from DWI data and is used as a weighting factor in the anisotropy modeling.
+**FA** map is derived from DWI data and is used as a weighting factor in the anisotropy modeling.
+
+**Theta** map is derived from DWI and it represent the fiber-to-B0 angle.
 
 ---
 
