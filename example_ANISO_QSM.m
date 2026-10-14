@@ -93,11 +93,11 @@ params.K      = kernel;
 params.weight = wmap / max(wmap(:));
 
 % Regularization and ADMM parameters
-params.alpha1        = 0.020801;
-params.mu1           = 2080.1;
-params.mu2           = 0.5;
-params.maxOuterIter  = 15;
-params.tolUpdate     = 0.1;
+params.alpha1        = 0.020801; % for sc use 0.01
+params.mu1           = 2080.1; % for sc use 0.10
+params.mu2           = 0.5; % for sc use 0.2
+params.maxOuterIter  = 15; % for sc use 300
+params.tolUpdate     = 0.1; % for sc use 0.1
 params.regweight     = regweight;
 
 % Solver options
