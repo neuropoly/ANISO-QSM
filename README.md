@@ -24,7 +24,7 @@ The algorithm uses the following MRI-derived maps:
 - Local field map
 - GRE magnitude
 - QSM map
-- Brain mask
+- Mask
 - R2′ map
 - Theta map
 - FA map
