@@ -70,8 +70,8 @@ Several maps must be generated from MRI data before running ANISO-QSM.
 
 ### 1. Local field map (`LocalField.nii`)
 The local field map is obtained from GRE phase images using:
-- **Phase unwrapping (recommended method:**ROMEO**)
-- **Background field removal (recommended method:**V-SHARP**)
+- Phase unwrapping (recommended method:**ROMEO**)
+- Background field removal (recommended method:**V-SHARP**)
 
 Recommended tool: [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
 
@@ -80,6 +80,7 @@ The QSM map is computed from the local field using dipole inversion.
 
 Recommended method:
 - **MEDI** (Morphology Enabled Dipole Inversion)
+  
 Recommended tool: [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
 
 ### 3. Mask (`mask.nii`)
@@ -96,16 +97,20 @@ where:
 - `R2 = 1 / T2`, obtained from spin-echo data or GRASE
 
 Both maps are estimated using a mono-exponential decay fit.
+
 Recommended tool: [SEPIA toolbox](https://sepia-documentation.readthedocs.io/en/latest/getting_started/Installation.html).
 
 ### 5. FA map (`FA.nii`)
 The FA map is computed from DWI data and is used as a weighting factor in the anisotropy modeling.
+
 Recommended tool: [FSL](https://fsl.fmrib.ox.ac.uk/fsl/docs/)
 
 ### 6. Theta map (`theta.nii`)
 The theta map is computed from diffusion-weighted imaging (DWI) data.
 
 The repository includes a Python script (func/CalculateTheta.py) to calculate this map.
+
+**Note:** After resampling the theta map to GRE space, apply a WM segmentation mask to retain only white matter voxels.
 
 ## Usage
 
