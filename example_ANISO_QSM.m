@@ -97,7 +97,7 @@ params.alpha1        = 0.020801;
 params.mu1           = 2080.1;
 params.mu2           = 0.5; 
 params.maxOuterIter  = 15; 
-params.tolUpdate     = 0.1; 
+params.tolUpdate     = 0.01; 
 params.regweight     = regweight;
 
 % Solver options
