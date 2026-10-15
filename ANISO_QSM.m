@@ -20,7 +20,7 @@ out_iso = run_aniso_solver( ...
     phase, alpha, N, Kernel, mu, mu2, maxOuterIter, ...
     tolUpdate, regweight, W, isPrecond, R2p, Drp, Drn, ...
     mask, theta, FA, QSM, [], [], ...
-    'zero', 'qsm', true);
+    'zero', 'isotropic', true);
 
 chi_plus_iso  = out_iso.x_plus;
 chi_minus_iso = out_iso.x_minus;
@@ -61,8 +61,8 @@ function out = run_anisotropic_solver(phase, alpha, N, Kernel, mu, mu2, ...
                                       mask, theta, FA, QSM, chi_plus_iso, chi_minus_iso)
 
 solverSettings = { ...
-    maxOuterIter,  Drn, chi_plus_iso, chi_minus_iso, 'zero',  'isotropic', true; ...
-    5, Drp, [],           [],            'theta', 'qsm',       false};
+    maxOuterIter,  Drn, chi_plus_iso, chi_minus_iso, 'zero',  'anisotropic', true; ...
+    5, Drp, [],           [],            'theta', 'isotropic',       false};
 
 solverOutput = cell(size(solverSettings, 1), 1);
 
@@ -171,18 +171,18 @@ s3_dz = zeros(N, 'single');
 
 switch lower(initMode)
 
-    case 'isotropic'
+    case 'anisotropic'
         xp = Xp;
         dX = Xn * -1;
         X0 = QSM;
 
-    case 'qsm'
+    case 'isotropic'
         xp = QSM;
         dX = QSM;
         X0 = QSM;
 
     otherwise
-        error('initMode must be either ''isotropic'' or ''qsm''.')
+        error('initMode must be either ''anisotropic'' or ''isotropic''.')
 
 end
 
