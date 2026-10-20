@@ -418,12 +418,9 @@ chi_minus = c2 .* dX + X0;
 
 mask    = mask > 0;
 sum_map = xp + chi_minus;
-
-beta_p = mean(xp(mask), 'all');
-xp        = xp - beta_p;
-
-beta_n = mean(chi_minus(mask), 'all');
-chi_minus = chi_minus - beta_n;
+beta = mean(sum_map(mask), 'all');
+xp        = xp - beta / 2;
+chi_minus = chi_minus - beta / 2;
 
 xp(xp < 0) = 0;
 chi_minus(chi_minus > 0) = 0;
