@@ -1,4 +1,4 @@
-function out = ANISO_QSM_test(params, varargin)
+function out = ANISO_QSM(params, varargin)
 totalTime = tic;
 
 %% ========================================================================
