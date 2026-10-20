@@ -91,8 +91,6 @@ out.X0_xn     = solverOutput{end}.X0;
 out.iter_xp = solverOutput{1}.iter;
 out.iter_xn = solverOutput{end}.iter;
 
-out.beta_xp = solverOutput{1}.beta_final;
-out.beta_xn = solverOutput{end}.beta_final;
 
 end
 
@@ -444,7 +442,6 @@ out.X0      = X0;
 out.x_minus = chi_minus;
 
 out.iter       = t;
-out.beta_final = beta;
 out.Drp_final  = Drp;
 out.Drn_final  = Drn;
 
