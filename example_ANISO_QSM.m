@@ -24,7 +24,14 @@ QSM_nii = load_untouch_nii('path to QSM');
 % ========================================================================
 
 localField = double(fld_nii.img);   % rad/s
-magn       = double(mag_nii.img);   % echo-1 magnitude
+magn = double(mag_nii.img);
+
+slope  = double(mag_nii.hdr.dime.scl_slope);
+offset = double(mag_nii.hdr.dime.scl_inter);
+
+if slope ~= 0
+    magn = magn .* slope + offset;
+end
 mask       = double(msk_nii.img);
 R2p        = double(R2p_nii.img);
 theta      = double(theta_nii.img);
