@@ -114,7 +114,7 @@ params.isPrecond = true;
 % Relaxation and susceptibility parameters
 params.R2p = R2p;
 params.Drp = 140;
-params.Drn = 140;
+params.Drn = 323;
 
 % Masks and orientation maps
 params.mask  = mask;
